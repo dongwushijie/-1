@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-color: #f6f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.ft{
+    color: #3e5a73;
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+.container{
+    text-align: center;
+}
+.progress-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    width: 350px;
+    position: relative;
+}
+/*用伪类元素做灰色的线*/
+.progress-container::before{
+    content: '';
+    background-color: #ababab;
+    height: 4px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    margin-top: -2px;
+    /*覆盖在文字下面*/
+    z-index: -1;
+}
+/*蓝色的线*/
+.progress{
+    background-color: rgba(19, 147, 211, 0.997);
+    /*想要一个元素浮在上面，一般用绝对定位*/
+    position: absolute;
+    width: 0%;
+    height: 4px;
+    top: 50%;
+    margin-top: -2px;
+    /*覆盖在文字下面*/
+    z-index: -1;
+    /*线条移动的动画*/
+    transition: width 0.3s ease-in-out;
+}
+.circle{
+    height: 40px;
+    width: 40px;
+    background-color: #fff;
+    color: #999;
+    border-radius: 50%;
+    font-size: 5px;
+    border: 3px solid #ababab;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: border-color 0.3s ease-in-out;
+}
+.circle.active{
+    border-color: rgba(19, 147, 211, 0.997);
+    
+}
+/*按钮正常状态*/
+.btn{
+    background-color: skyblue;
+    border: 0;
+    color: #fff;
+    border-radius: 3px;
+    padding: 8px 20px;
+    font-size: 14px;
+    margin: 5px;
+}
+/*按钮当你按下还没松开时的状态*/
+.btn:active{
+    transform: scale(0.9);
+}
+/*设置禁用按钮*/
+.btn:disabled{
+    background-color: #ababab;
+    cursor: not-allowed;
+}
+/*按钮当你按下还没松开时的状态*/
+.btn:focus{
+    outline: 0;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ft">地铁2号线</div>
+        <!--上半部分,圆圈和线-->
+        <div class="progress-container">
+            <!--线部分-->
+            <div class="progress" id="progress"></div>
+            <!--圆圈部分-->
+            <div class="circle active">会展中心</div>
+            <div class="circle">三爻</div>
+            <div class="circle">凤栖原</div>
+            <div class="circle">航天城</div>
+        </div>
+        <!--下半部分，按钮-->
+        <button class="btn" id="prev" disabled>后退</button>
+        <button class="btn" id="next">前进</button>
+    </div>
+    <script>
+        //获取元素,分别是蓝线，前进和后退按钮，圆圈
+const progress=document.getElementById('progress');
+const next=document.getElementById('next');
+const prev=document.getElementById('prev');
+const circles=document.querySelectorAll('.circle');
+//知道点到哪里了
+let currentActive = 1;
+//注册前进点击事件
+next.addEventListener('click',()=>{
+    currentActive++
+    update();
+});
+//注册后退点击事件
+prev.addEventListener('click',()=>{
+    currentActive--
+    update();
+});
+//声明函数update的内容,想实现圆圈变色，线条变色的效果
+function update(){
+    //index表示circel[i],item就是索引值?
+    //通俗说就是index表示circle[i-1],item表示第,i个圆，currentActive表示自定义的数字
+    //比如说数字是2的圆,他的index就是1，item是2，currentActive是2,
+    circles.forEach((item, index) => {
+        if(index < currentActive) {
+            item.classList.add('active')
+        } else {
+            item.classList.remove('active')
+        }
+    })
+    //你所在的位置/总的份数，因为是分数，所以乘以100
+    progress.style.width = (currentActive - 1) / (circles.length - 1) * 100+'%';
+    //设置按钮后退到1时不显示，前进到4时前进不显示
+    if(currentActive===1){
+        prev.disabled=true;
+    }
+    else if(currentActive===4){
+        next.disabled=true;
+    }
+    else{
+        prev.disabled=false;
+        next.disabled=false;
+    }
+}
+    </script>
+</body>
+</html>
